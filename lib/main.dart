@@ -13,7 +13,7 @@ class App extends StatelessWidget {
   const App({super.key});
   @override
   Widget build(BuildContext context) => MaterialApp(
-        title: 'SC Client',
+        title: 'Music Client',
         theme: ThemeData(
           colorSchemeSeed: Colors.deepOrange,
           brightness: Brightness.dark,
@@ -38,6 +38,14 @@ class _HomePageState extends State<HomePage> {
   bool loading = false;
   String? error;
 
+  @override
+  void initState() {
+    super.initState();
+    api.trending().then((r) {
+      if (mounted) setState(() => tracks = r);
+    }).catchError((_) {});
+  }
+
   Future<void> search() async {
     if (ctrl.text.trim().isEmpty) return;
     setState(() { loading = true; error = null; });
@@ -56,9 +64,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final url = await api.streamUrl(t.id);
       if (url == null) throw 'нет потока для этого трека';
-      await player.setAudioSource(
-        AudioSource.uri(Uri.parse(url), headers: api.authHeaders),
-      );
+      await player.setAudioSource(AudioSource.uri(Uri.parse(url)));
       player.play();
     } catch (e) {
       setState(() => error = 'Ошибка воспроизведения: $e');
@@ -80,27 +86,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (clientId.isEmpty || clientSecret.isEmpty) {
-      return const Scaffold(
-        body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(24),
-            child: Text(
-              'Запусти с ключами:\n'
-              'flutter run --dart-define=SC_CLIENT_ID=... --dart-define=SC_CLIENT_SECRET=...',
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      );
-    }
     return Scaffold(
       appBar: AppBar(
         title: TextField(
           controller: ctrl,
           onSubmitted: (_) => search(),
           decoration: const InputDecoration(
-            hintText: 'Поиск треков',
+            hintText: 'Поиск треков (Audius)',
             border: InputBorder.none,
           ),
         ),
