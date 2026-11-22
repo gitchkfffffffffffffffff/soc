@@ -1,0 +1,19 @@
+name: sc_client
+description: Simple SoundCloud client for Android and Windows
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^5.4.0
+  just_audio: ^0.9.40
+  just_audio_media_kit: ^2.0.5
+  media_kit_libs_windows_audio: ^1.0.9
+  media_kit_libs_android_audio: ^1.3.6
+
+flutter:
+  uses-material-design: true
